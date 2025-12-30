@@ -242,8 +242,8 @@ struct entity
 		current = perten_to_percent(powers[power_type].current);
 		perten precovering;
 		perten plosing;
-		for (unsigned i = 0; i < powers[i].recovery.size(); i++) precovering += powers[power_type].recovery[i];
-		for (unsigned i = 0; i < damage[i].dot.size(); i++) plosing += damage[power_type].dot[i]; // TBD apply damage_dot and power_dot_taken?
+		for (unsigned i = 0; i < powers[power_type].recovery.size(); i++) precovering += powers[power_type].recovery[i];
+		for (unsigned i = 0; i < damage[power_type].dot.size(); i++) plosing += damage[power_type].dot[i]; // TBD apply damage_dot and power_dot_taken?
 		recovering = std::min<uint32_t>(perten_to_percent(precovering), maximum - current);
 		losing = std::min<uint32_t>(perten_to_percent(plosing), current);
 	}
