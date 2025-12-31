@@ -1,0 +1,5 @@
+ObjectType,File,Type,Value
+Item,item_mods.csv,Modifiers,1
+Skill,skill_mods.csv,Modifiers,2
+Class,class_mods.csv,Modifiers,3
+Devices,device_mods.csv,Modifiers,4
