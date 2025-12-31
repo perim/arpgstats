@@ -212,7 +212,6 @@ struct entity
 	}
 
 	/// Entity receives an interrupt. This resets any skill currently in the windup and channeling stages.
-	/// This typically happens if the entity decides to move or is forced to move.
 	void interrupt()
 	{
 		for (unsigned slot = 0; slot < slots.size(); slot++)
@@ -322,10 +321,23 @@ struct entity
 
 	// --- Tick ---
 
+	bool update_skill_state(int i, skill_slot_def& s, status_per_skill modifier, skill_states next, perten next_value)
+	{
+		s.value = std::max(perten_empty, s.value - perten_apply(perten_full, skill_status(modifier, i)));
+		if (s.value == perten_empty)
+		{
+			s.state = skill_state_animation;
+			s.value = next_value;
+			events.push_back({i, next});
+			return true;
+		}
+		return false;
+	}
+
 	bool second_tick()
 	{
 		assert(events.size() == 0);
-		bool events_added = false;
+		int events_added = 0;
 		auto before = timed_statuses.before_begin();
 		for (auto it = timed_statuses.begin(); it != timed_statuses.end(); )
 		{
@@ -347,42 +359,14 @@ struct entity
 		for (int i = 0; i < skill_slots; i++)
 		{
 			skill_slot_def& s = slots[i];
+
 			if (s.value == perten_empty) continue;
-			if (s.state == skill_state_windup)
-			{
-				s.value = std::max(perten_empty, s.value - perten_apply(perten_full, skill_status(windup_time_modifier, i)));
-				if (s.value == perten_empty)
-				{
-					s.state = skill_state_animation;
-					s.value = s.cooldown_time;
-					events_added = true;
-					events.push_back({i, skill_state_animation});
-				}
-			}
-			else if (s.state == skill_state_animation)
-			{
-				s.value = std::max(perten_empty, s.value - perten_apply(perten_full, skill_status(animation_time_modifier, i)));
-				if (s.value == perten_empty)
-				{
-					s.state = skill_state_cooldown;
-					s.value = s.cooldown_time;
-					events_added = true;
-					events.push_back({i, skill_state_cooldown});
-				}
-			}
-			else if (s.state == skill_state_cooldown)
-			{
-				s.value = std::max(perten_empty, s.value - perten_apply(perten_full, skill_status(cooldown_time_modifier, i)));
-				if (s.value == perten_empty)
-				{
-					s.state = skill_state_ready;
-					s.value = perten_from_uint(pop_ticks);
-					events_added = true;
-					events.push_back({i, skill_state_ready});
-				}
-			}
+
+			if (s.state == skill_state_windup) events_added += update_skill_state(i, s, windup_time_modifier, skill_state_animation, s.cooldown_time);
+			else if (s.state == skill_state_animation) events_added += update_skill_state(i, s, animation_time_modifier, skill_state_cooldown, s.cooldown_time);
+			else if (s.state == skill_state_cooldown) events_added += update_skill_state(i, s, cooldown_time_modifier, skill_state_ready, perten_from_uint(pop_ticks));
 		}
-		return events_added;
+		return events_added > 0;
 	}
 
 	// --- Damage / Power ---
