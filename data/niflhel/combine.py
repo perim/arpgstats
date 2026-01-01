@@ -2,6 +2,7 @@
 
 import csv
 import os
+import copy
 
 # Get the directory of the script
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -30,10 +31,13 @@ with open(main_csv_path, 'r') as main_file:
 						if k == None or k == '': continue
 						assert k.strip() in fieldnames, '%s not found in accepted list of keys from %s' % (k.strip(), file_path)
 						dataline[k.strip()] = v.strip()
-					if not 'Type' in dataline or dataline['Type'] == '' or dataline['Type'] == None: continue
+					if not 'Type' in dataline or dataline['Type'] == '' or dataline['Type'] is None: continue
 					if not 'Weighting' in dataline or dataline['Weighting'] == '' or dataline['Weighting'] == None:
 						dataline['Weighting'] = '0' # Should fix in input data
 					type = dataline['Type']
+					assert 'Description' in dataline, 'No Description key in input: %s' % str(dataline)
+					assert not dataline['Description'] is None, 'Invalid Description key in input: %s' % str(dataline)
+					assert dataline['Description'] != '' or dataline['Weighting'][0] == '<', 'Empty Description key in input: %s' % str(dataline)
 					if type[0] == '[': # cache it
 						if not type in cache:
 							cache[type] = []
@@ -41,9 +45,22 @@ with open(main_csv_path, 'r') as main_file:
 						continue
 					if not 'Max' in dataline and 'Min' in dataline: dataline['Max'] = dataline['Min']
 					if not 'Min' in dataline and 'Max' in dataline: dataline['Min'] = dataline['Max']
-					assert 'Weighting' in dataline, 'No Weighting key in input'
-					assert 'Type' in dataline, 'No Type key in input'
+					assert 'Weighting' in dataline, 'No Weighting key in input: %s' % str(dataline)
 					data.append(dataline)
+
+def cache_fetch(type, line, newdata):
+	lookup = line['Weighting'].replace('<', '[').replace('>', ']')
+	assert lookup in cache, '%s not found in cache!' % lookup
+	print('Cache key %s (matches %s) for type %s (%d entries)' % (lookup, line['Weighting'], type, len(cache[lookup])))
+	for addendum in cache[lookup]:
+		if addendum['Weighting'][0] == '<':
+			print('\tnesting cache for %s : %s -> %s -> %s' % (type, lookup, addendum['Type'], addendum['Weighting']))
+			cache_fetch(type, addendum, newdata) # recursive
+		else:
+			print('\t"%s" from cache line %s for type %s' % (addendum['Description'], lookup, type))
+			newline = copy.deepcopy(addendum)
+			newline['Type'] = type
+			newdata.append(newline)
 
 # Merge in from cache
 newdata = []
@@ -51,16 +68,10 @@ for line in data:
 	assert 'Weighting' in line, 'WTF'
 	assert len(line['Weighting']) > 0, 'WTF'
 	if line['Weighting'][0] != '<':
+		assert line['Weighting'].isdigit(), '%s is not a number: %s' % (line['Weighting'], line)
 		newdata.append(line)
 	else:
-		lookup = line['Weighting'].replace('<', '[').replace('>', ']')
-		assert lookup in cache, '%s not found in cache!' % lookup
-		print('Found cache key %s for type %s (%d entries)' % (lookup, line['Type'], len(cache[lookup])))
-		for addendum in cache[lookup]:
-			print('Found %s cache line %s for type %s (%d entries)' % (addendum['Description'], lookup, line['Type'], len(addendum)))
-			newline = addendum
-			newline['Type'] = line['Type']
-			newdata.append(newline)
+		cache_fetch(line['Type'], line, newdata)
 
 # Write the combined data to combined.csv
 with open(combined_csv_path, 'w', newline='') as combined_file:
