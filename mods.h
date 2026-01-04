@@ -54,6 +54,7 @@ struct mod_data
 //	uint16_t min_depth = 0; // zero means no limit
 //	uint16_t max_depth = 0; // zero means no limit
 	uint16_t weighting = 0;
+//	int16_t variance_type = -1; // the type of variance used in this modifier, or -1 if none
 	// trees only:
 	int16_t requires = -1; // if it requires another mod to be present first
 	uint8_t max_count = 0; // only this many nodes of this type can be on the tree
