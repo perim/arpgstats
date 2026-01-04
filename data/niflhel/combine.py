@@ -10,7 +10,7 @@ main_csv_path = os.path.join(dir_path, 'main.csv')
 combined_csv_path = os.path.join(dir_path, 'combined.csv')
 
 # List to hold all the data from the CSV files
-fieldnames = [ 'Type', 'Name', 'Weighting', 'Subtype', 'Min', 'Max', 'Description', 'Define', 'Requires' ]
+fieldnames = [ 'Type', 'Name', 'Weighting', 'Classification', 'Min', 'Max', 'Description', 'Define', 'Requires', 'Cap', 'LUID', 'Subtype' ]
 data = []
 
 # Cache of reused sections. Map of list of maps.
@@ -28,9 +28,10 @@ with open(main_csv_path, 'r') as main_file:
 				for line in reader:
 					dataline = {}
 					for k,v in line.items():
-						if k == None or k == '': continue
+						if k is None or k == '': continue
 						assert k.strip() in fieldnames, '%s not found in accepted list of keys from %s' % (k.strip(), file_path)
-						dataline[k.strip()] = v.strip()
+						if v is None: dataline[k.strip()] = ''
+						else: dataline[k.strip()] = v.strip()
 					if not 'Type' in dataline or dataline['Type'] == '' or dataline['Type'] is None: continue
 					if not 'Weighting' in dataline or dataline['Weighting'] == '' or dataline['Weighting'] == None:
 						dataline['Weighting'] = '0' # Should fix in input data

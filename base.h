@@ -1,5 +1,8 @@
 #pragma once
 
+#include <stdint.h>
+#include <tuple>
+
 using index_t = int16_t;
 using level_t = int16_t;
 using tile_t = uint16_t;
