@@ -30,12 +30,13 @@ struct variance_pair
 	uint8_t value = 0; // value of the variance
 };
 
-struct item_mod
+struct mod
 {
 	uint8_t type;
 	uint8_t roll;
 	mod_category category;
-	std::vector<variance_pair> variance;
+	variance_pair restriction;
+	variance_pair condition;
 };
 
 // as read from file

@@ -13,3 +13,8 @@ ADD_EXECUTABLE(mods_test tests/mods_test.cpp mods.cpp mods.h)
 TARGET_INCLUDE_DIRECTORIES(mods_test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 TARGET_LINK_LIBRARIES(mods_test ${ARPGSTATS_LIBS})
 #ADD_TEST(mods_test mods_test)
+
+ADD_EXECUTABLE(item_test item.cpp item.h tests/item_test.cpp)
+TARGET_INCLUDE_DIRECTORIES(item_test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+TARGET_LINK_LIBRARIES(item_test ${ARPGSTATS_LIBS})
+ADD_TEST(item_test item_test)

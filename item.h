@@ -1,5 +1,13 @@
 #pragma once
 
+#include "base.h"
+#include "mods.h"
+#include "external/libdicey/dice.h"
+
+#include <stdint.h>
+
+#include <vector>
+
 enum class base_item_type_t
 {
 	permanent,
@@ -41,8 +49,8 @@ struct item_t
 
 struct item_luck_t
 {
-	luck_type drop_rarity_luck;
-	luck_type drop_quantity_luck;
+	int drop_rarity_luck = 0;
+	int drop_quantity_luck = 0;
 	int rarity = 0;
 	int quantity = 0;
 	int currency_duplication_chance = 0;
@@ -68,9 +76,10 @@ struct level_loot_context_t
 
 struct loot_context_t
 {
+	loot_context_t(seed& s) : rand(s) {}
 	seed rand; // when level is created, determine how many chests are there, and generate a seed for each ahead of time
-	const level_loot_context_t* level_modifiers;
-	const item_luck_t* player_modifiers;
+	const level_loot_context_t* level_modifiers = nullptr;
+	const item_luck_t* player_modifiers = nullptr;
 };
 
 struct currency_t
@@ -90,5 +99,4 @@ item_t create_item(const loot_context_t& context, const restrict_drop_t* filter 
 
 /// Generate drops from a chest (or similar). Pass a `keystone` parameter if the chest
 /// should contain a keystone item, can be used to override its modifiers and rolls.
-drops_t generate_drops(loot_context_t context, int items, int currency, const restrict_drop_t* keystone = nullptr);
-// ... or should it be a std::vector of keystone items, empty by default?
+drops_t generate_drops(const loot_context_t& context, int items, int currency, const restrict_drop_t* keystone = nullptr);
