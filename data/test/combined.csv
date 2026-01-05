@@ -1,0 +1,4 @@
+Type,Name,Weighting,Classification,Min,Max,Description,Define,Requires,Cap,LUID,Subtype
+Forge,BetterRollRange,100,Craft,5,15,% better roll range and crafting costs,craft_lucky,,,1,
+Forge,RecoupCostMediocre,150,Craft,25,45,"% chance to recoup crafting costs, rolls are mediocre",craft_recoup_mediocre,,,2,
+Forge,RecoupCostUncommon,150,Craft,5,10,"% chance to recoup crafting costs, rolls are less mediocre",craft_uncommon,,,3,
