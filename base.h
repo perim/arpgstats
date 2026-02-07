@@ -8,7 +8,7 @@ using level_t = int16_t;
 using tile_t = uint16_t;
 using tag_t = uint16_t;
 
-/// A position is one unique coordinate
+/// A position is one unique tile coordinate
 struct position
 {
 	tile_t x;

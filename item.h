@@ -10,8 +10,10 @@
 
 enum class base_item_type_t
 {
-	permanent,
-	consumable,
+	equippable,
+	consumable, // has charges/stacks
+	placeable,
+	unlockable, // quest or collectable vanity item, ie no relevant function here
 	any
 };
 
@@ -98,5 +100,5 @@ struct drops_t
 item_t create_item(const loot_context_t& context, const restrict_drop_t* filter = nullptr);
 
 /// Generate drops from a chest (or similar). Pass a `keystone` parameter if the chest
-/// should contain a keystone item, can be used to override its modifiers and rolls.
+/// should contain a keystone item and can be used to override its modifiers and rolls.
 drops_t generate_drops(const loot_context_t& context, int items, int currency, const restrict_drop_t* keystone = nullptr);

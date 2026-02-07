@@ -36,3 +36,18 @@
 ## Data & Tooling Notes
 - CSV definitions live in `data/niflhel/*.csv`; `data/niflhel/combine.py` produces `combined.csv`.
 - If you modify CSVs, document the regeneration command and any assumptions.
+
+## General notes
+- Any results that are retained or cached or change game state must be deterministic.
+- Results that merely displayed to the user do not have to be fully deterministic.
+- We do not trust floating point to be deterministic between all platforms.
+
+## Abilities management
+- The code is in `argpstats.h` and documentation in `doc/Abilities.md`. Unit tests in `tests/stats_test.cpp`.
+- This code is expected to be called very often, so needs to be fast and should cache results as much as possible.
+
+## Modifiers management
+- The code is in `mods.cpp`, interface in `mods.h`, and documentation in `doc/Modifiers.md`. Unit tests in `tests/mods_test.cpp`.
+
+## Item generation
+- The code is in `item.cpp`, interface in `item.h`, and documentation in `doc/Items.md`. Unit tests in `item_test.cpp`.

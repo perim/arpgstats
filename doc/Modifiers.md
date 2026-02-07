@@ -4,7 +4,17 @@ ARGP Modifier Management
 This module takes care of the large amount of `modifiers` that a game can
 have and the wide variety of different targets these may have.
 
-Modifiers are defined in CSV files.
+Modifiers are defined in CSV files. When you have a lot of complex entries
+for your roll tables, it gets easier to manage in a spreadsheet. To avoid
+tedious and error-prone duplication into code, generate the modifiers from
+the CSVs. We use the `combine.py` script to combine all the various CSV
+files into one big modifiers file called `combined.csv`, using a `main.csv`
+as the input.
+
+In the CSV, you can deduplicate entries using templates. Define a template
+by enclosing the `Type` column name between `[ and ]`. You can include a
+template by adding a row where the `Weighting` is the name of the template
+enclosed between '< and >'.
 
 Each modifier must have
 * A description text.
