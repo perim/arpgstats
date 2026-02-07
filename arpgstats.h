@@ -319,14 +319,16 @@ struct entity
 	{
 		perten pvalue = perten_from_percent(value);
 		statuses[index] = perten_reduce(statuses[index], pvalue);
-		timed_statuses.push_front({secs, index, pvalue});
+		timed_statuses.push_front({secs, index, perten_full - pvalue});
 	}
 
 	// --- Tick ---
 
 	bool update_skill_state(int i, skill_slot_def& s, status_per_skill modifier, skill_states next, perten next_value)
 	{
-		s.value = std::max(perten_empty, s.value - perten_apply(perten_full, skill_status(modifier, i)));
+		const perten step = perten_apply(perten_full, skill_status(modifier, i));
+		if (s.value <= step) s.value = perten_empty;
+		else s.value -= step;
 		if (s.value == perten_empty)
 		{
 			s.state = next;

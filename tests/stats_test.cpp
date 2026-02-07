@@ -143,6 +143,101 @@ static void test_skill()
 	s.self_test();
 }
 
+static void test_skill_cost_gating()
+{
+	arpg::stats s;
+	s.entities.push_back({});
+	arpg::entity& e = s.entities[0];
+	e.powers[0].current = perten_from_percent(50);
+	arpg::skill sk;
+	sk.skill = 0;
+	sk.cost_type = 0;
+	sk.cost = 60;
+	sk.flags = 0;
+	sk.windup_time = 1;
+	sk.animation_time = 1;
+	sk.cooldown_time = 1;
+	e.set_skill(0, sk);
+	assert(e.try_start_skill(0) == false);
+	assert(e.slots[0].state == arpg::skill_state_ready);
+	assert(e.slots[0].value == perten_empty);
+	assert(perten_to_percent(e.powers[0].current) == 50);
+}
+
+static void test_skill_interrupt()
+{
+	arpg::stats s;
+	s.entities.push_back({});
+	arpg::entity& e = s.entities[0];
+	arpg::skill sk;
+	sk.skill = 0;
+	sk.cost_type = 0;
+	sk.cost = 0;
+	sk.flags = 0;
+	sk.windup_time = 2;
+	sk.animation_time = 1;
+	sk.cooldown_time = 10;
+	e.set_skill(0, sk);
+	e.statuses[arpg::skill_status_index(arpg::interrupt_cooldown_modifier, 0)] = perten_from_percent(50);
+	e.statuses_original = e.statuses;
+	assert(e.try_start_skill(0) == true);
+	assert(e.slots[0].state == arpg::skill_state_windup);
+	e.interrupt();
+	assert(e.slots[0].state == arpg::skill_state_cooldown);
+	assert(e.slots[0].value == perten_apply(e.slots[0].cooldown_time, perten_from_percent(50)));
+}
+
+static void test_skill_zero_duration_cascade()
+{
+	arpg::stats s;
+	s.entities.push_back({});
+	arpg::entity& e = s.entities[0];
+	arpg::skill sk;
+	sk.skill = 0;
+	sk.cost_type = 0;
+	sk.cost = 0;
+	sk.flags = 0;
+	sk.windup_time = 0;
+	sk.animation_time = 0;
+	sk.cooldown_time = 0;
+	e.set_skill(0, sk);
+	assert(e.try_start_skill(0) == true);
+	assert(e.slots[0].state == arpg::skill_state_animation);
+	assert(e.slots[0].value == perten_empty);
+
+	s.second_tick();
+	assert(s.entities_with_events.size() == 1);
+	assert(e.events.size() == 2);
+	assert(e.events[0].new_state == arpg::skill_state_cooldown);
+	assert(e.events[1].new_state == arpg::skill_state_ready);
+	assert(e.slots[0].state == arpg::skill_state_ready);
+	assert(e.slots[0].value == perten_from_uint(arpg::pop_ticks));
+	s.entities_with_events.clear();
+	e.events.clear();
+}
+
+static void test_timed_status_stack_decrease()
+{
+	arpg::stats s;
+	s.entities.push_back({});
+	arpg::entity& e = s.entities[0];
+	int index = arpg::power_status_index(arpg::power_cost_modify, 0);
+	perten dec50 = perten_from_percent(50);
+	perten dec20 = perten_from_percent(20);
+	perten expected_both = perten_reduce(perten_reduce(perten_full, dec50), dec20);
+	perten expected_one = perten_reduce(perten_full, dec20);
+
+	e.timed_status_decrease(index, 50, 1);
+	e.timed_status_decrease(index, 20, 3);
+	assert(e.statuses[index] == expected_both);
+
+	s.second_tick();
+	assert(e.statuses[index] == expected_both);
+
+	s.second_tick();
+	assert(e.statuses[index] == expected_one);
+}
+
 static void test_skill_state_progression()
 {
 	arpg::stats s;
@@ -203,6 +298,10 @@ int main()
 	test_damage_dot_exponential();
 	test_power_regeneration();
 	test_skill();
+	test_skill_cost_gating();
+	test_skill_interrupt();
+	test_skill_zero_duration_cascade();
+	test_timed_status_stack_decrease();
 	test_skill_state_progression();
 	return 0;
 }
