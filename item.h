@@ -96,8 +96,22 @@ struct drops_t
 	std::vector<currency_t> currencies;
 };
 
-/// Generate an item. May restrict what type, rarity and quantity is generated.
-item_t create_item(const loot_context_t& context, const restrict_drop_t* filter = nullptr);
+/// Read item definitions from CSV
+bool read_items(const char* path);
+
+/// Read currencies from CSV
+bool read_currencies(const char* path);
+
+/// Get all item types.
+const std::vector<std::string>& get_item_types();
+
+/// Get all currency types.
+const std::vector<std::string>& get_currency_types();
+
+/// Generate an item. You may influence what type, rarity and quantity is generated through `context`.
+/// If `keystone` is not null, then we generate a keystone item with more restrictions and
+/// influences.
+item_t create_item(const loot_context_t& context, const restrict_drop_t* keystone = nullptr);
 
 /// Generate drops from a chest (or similar). Pass a `keystone` parameter if the chest
 /// should contain a keystone item and can be used to override its modifiers and rolls.

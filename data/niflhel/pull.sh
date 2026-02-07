@@ -10,5 +10,9 @@ pull skill_mods.csv 1099504492
 pull class_mods.csv 0
 pull device_mods.csv 1526865506
 
+# Items
+pull equipment.csv 1927042379
+pull currencies.csv 874376262
+
 # Misc
 pull types.csv 552895390

@@ -17,4 +17,4 @@ ADD_TEST(NAME mods_test COMMAND mods_test ${CMAKE_CURRENT_SOURCE_DIR}/data/test/
 ADD_EXECUTABLE(item_test item.cpp item.h tests/item_test.cpp)
 TARGET_INCLUDE_DIRECTORIES(item_test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 TARGET_LINK_LIBRARIES(item_test ${ARPGSTATS_LIBS})
-ADD_TEST(NAME item_test COMMAND item_test)
+ADD_TEST(NAME item_test COMMAND item_test ${CMAKE_CURRENT_SOURCE_DIR}/data/test/combined.csv ${CMAKE_CURRENT_SOURCE_DIR}/data/test/currencies.csv)

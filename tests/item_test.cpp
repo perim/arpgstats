@@ -5,6 +5,25 @@
 int main(int argc, char** argv)
 {
 	seed s(0);
+
+	if (argc < 3)
+	{
+		printf("Usage: %s <csv item file> <csv currency file\n", argv[0]);
+		exit(-1);
+	}
+
+	bool r = read_items(argv[1]);
+	assert(r);
+
+	r = read_currencies(argv[2]);
+	assert(r);
+
+	const std::vector<std::string>& item_types = get_item_types();
+	//assert(types.size() > 0);
+
+	const std::vector<std::string>& currency_types = get_currency_types();
+	assert(currency_types.size() > 0);
+
 	struct loot_context_t ctx(s);
 	item_t item = create_item(ctx, nullptr);
 	assert(item.mods.size() > 0);
