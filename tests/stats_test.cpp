@@ -97,6 +97,34 @@ static void test_damage()
 	s.self_test();
 }
 
+static void test_damage_dot_exponential()
+{
+	arpg::damage_mods offense;
+	offense.fill(100);
+	offense[arpg::damage_dot_exponential] = 200;
+	arpg::stats s;
+	s.entities.push_back({});
+	s.entities[0].apply_damage_over_time(s.current_effect_second, 0, 3, 10, offense);
+	perten expected = perten_from_percent(10);
+	assert(s.entities[0].damage[0].dot[0] == expected);
+	expected = perten_apply(expected, perten_from_percent(200));
+	assert(s.entities[0].damage[0].dot[1] == expected);
+	expected = perten_apply(expected, perten_from_percent(200));
+	assert(s.entities[0].damage[0].dot[2] == expected);
+}
+
+static void test_power_regeneration()
+{
+	arpg::stats s;
+	s.entities.push_back({});
+	arpg::entity& e = s.entities[0];
+	e.powers[0].current = perten_from_percent(50);
+	e.statuses[arpg::power_status_index(arpg::power_regeneration_rate, 0)] = perten_from_percent(10);
+	e.statuses_original = e.statuses;
+	s.second_tick();
+	assert(perten_to_percent(e.powers[0].current) == 60);
+}
+
 static void test_skill()
 {
 	arpg::stats s;
@@ -115,11 +143,66 @@ static void test_skill()
 	s.self_test();
 }
 
+static void test_skill_state_progression()
+{
+	arpg::stats s;
+	s.entities.push_back({});
+	arpg::skill sk;
+	sk.skill = 0;
+	sk.cost_type = 0;
+	sk.cost = 0;
+	sk.flags = 0;
+	sk.windup_time = 1;
+	sk.animation_time = 1;
+	sk.cooldown_time = 1;
+	s.entities[0].set_skill(0, sk);
+	assert(s.entities[0].try_start_skill(0) == true);
+	assert(s.entities[0].slots[0].state == arpg::skill_state_windup);
+
+	s.second_tick();
+	assert(s.entities_with_events.size() == 1);
+	assert(s.entities[0].events.size() == 1);
+	assert(s.entities[0].events[0].new_state == arpg::skill_state_animation);
+	assert(s.entities[0].slots[0].state == arpg::skill_state_animation);
+	s.entities[0].events.clear();
+	s.entities_with_events.clear();
+
+	s.second_tick();
+	assert(s.entities_with_events.size() == 1);
+	assert(s.entities[0].events.size() == 1);
+	assert(s.entities[0].events[0].new_state == arpg::skill_state_cooldown);
+	assert(s.entities[0].slots[0].state == arpg::skill_state_cooldown);
+	s.entities[0].events.clear();
+	s.entities_with_events.clear();
+
+	s.second_tick();
+	assert(s.entities_with_events.size() == 1);
+	assert(s.entities[0].events.size() == 1);
+	assert(s.entities[0].events[0].new_state == arpg::skill_state_ready);
+	assert(s.entities[0].slots[0].state == arpg::skill_state_ready);
+	assert(s.entities[0].slots[0].value == perten_from_uint(arpg::pop_ticks));
+	s.entities[0].events.clear();
+	s.entities_with_events.clear();
+
+	s.second_tick();
+	assert(s.entities_with_events.size() == 0);
+	assert(s.entities[0].slots[0].value == perten_from_uint(1));
+
+	s.second_tick();
+	assert(s.entities_with_events.size() == 0);
+	assert(s.entities[0].slots[0].value == perten_empty);
+
+	s.self_test();
+}
+
 int main()
 {
 	test_over_time_effects();
 	test_damage_distribution();
 	test_damage();
+	test_damage_dot_exponential();
+	test_power_regeneration();
 	test_skill();
+	test_skill_state_progression();
 	return 0;
 }

@@ -7,7 +7,7 @@ role-playing game (ARPG). It has a number of different interconnected modules.
 These are:
 * [The character ability management module](doc/Abilities.md)
 * [The modifiers management module](doc/Modifiers.md)
-* Coming soon: Item generation module
+* [Item generation module](doc/Items.md)
 
 The library is written to be fast and there are some sacrifices made to ensure that
 this is the case. The game is assumed to require fully deterministic operation across

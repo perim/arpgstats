@@ -1,11 +1,11 @@
 ARPG Abilities Management
 =========================
 
-Thie module can take care of tracking powers (such as health, stamina, energy), skill
+This module can take care of tracking powers (such as health, stamina, energy), skill
 cooldowns, buffs and debuffs, while implementing features such as regeneration,
 temporary bonus power, and temporary and permanent upgrades.
 
-The main C++ header defines a section dedicated to game wide setup state. You are meant
+The main C++ header defines a section dedicated to game-wide setup state. You are meant
 to modify these to match your game.
 
 The library is written to be fast and there are some sacrifices made to ensure that
@@ -20,8 +20,8 @@ low precision to save CPU time.
 
 You can also mark entities as not `active` which means no further calculations will be
 done on them. There is a helper function `inactive_candidate()` which will let you know
-if we consider it safe to make it inactive (ie it has no timed statuses or damage over
-time on it).
+if we consider it safe to make it inactive (ie it has no timed statuses, recovery, or
+damage over time pending). It does not consider skill timers.
 
 Powers
 ------
@@ -50,7 +50,7 @@ A number of different statuses (upgrades) exist for each power:
 * `power_dot_taken` - loss over time of this power is modified by this amount
 * `power_recovery_modify` - modify amount gained each tick by this amount
 * `power_recovery_time` - modify time a gain happens over, which means more total
-  recovery in the ened
+  recovery in the end
 * `power_regeneration_rate` - amount of power automatically gained each tick
 * `power_cost_modify` - modify the cost of using this power
 
@@ -116,7 +116,6 @@ Definitions:
 Each skill exists in one of these states:
 * `skill_state_ready` - default state, skill is ready for use
 * `skill_state_windup` - entity is in an interruptible state waiting for skill to start
-* `skill_state_windup_done` - we are waiting for higher level code to start the skill
 * `skill_state_animation` - skill has begun, spend some time until entity can use a skill
   again
 * `skill_state_cooldown` - skill is done and is waiting for its cooldown period to finish
@@ -125,6 +124,7 @@ A number of different statuses exist for each:
 * `windup_time_modifier` - modifies the windup time
 * `animation_time_modifier` - modifies the animation time
 * `cooldown_time_modifier` - modifies the cooldown time
+* `interrupt_cooldown_modifier` - modifies the cooldown time when interrupted
 
 Some key skill functions:
 * `try_pay_skill(slot)` - only fails if the entity lacks the required power to pay for it

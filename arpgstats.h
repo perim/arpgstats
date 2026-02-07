@@ -149,11 +149,12 @@ struct entity
 	{
 		statuses.fill(perten_full);
 		for (unsigned i = 0; i < power_types; i++) statuses[power_status_index(power_excess_loss_rate, i)] = perten_from_uint(base_excess_loss_rate);
+		for (unsigned i = 0; i < power_types; i++) statuses[power_status_index(power_regeneration_rate, i)] = perten_empty;
 		for (unsigned i = 0; i < power_types; i++) powers[i].recovery.fill(perten_empty);
 		for (unsigned i = 0; i < damage_types; i++) damage[i].dot.fill(perten_empty);
 		for (unsigned i = 0; i < power_types; i++) for (unsigned j = 0; j < damage_types; j++) statuses[damage_distribution_index(j, i)] = perten_empty;
-		statuses_original = statuses;
 		for (unsigned j = 0; j < damage_types; j++) statuses[damage_distribution_index(j, 0)] = perten_full; // by default the first power takes all damage
+		statuses_original = statuses;
 	}
 
 	std::vector<event> events;
@@ -168,10 +169,10 @@ struct entity
 	std::array<perten, max_statuses> statuses_original; // statuses before timed effects
 	std::forward_list<timed_status_def> timed_statuses;
 
-	inline perten damage_distribution(int damage_type, int power_type) { return statuses[damage_distribution_index(damage_type, power_type)]; }
-	inline perten damage_status(status_per_damage e, int damage_type) { return statuses[damage_status_index(e, damage_type)]; }
-	inline perten power_status(status_per_power e, int power_type) { return statuses[power_status_index(e, power_type)]; }
-	inline perten skill_status(status_per_skill e, int slot) { return statuses[skill_status_index(e, slot)]; }
+	inline perten damage_distribution(int damage_type, int power_type) const { return statuses[damage_distribution_index(damage_type, power_type)]; }
+	inline perten damage_status(status_per_damage e, int damage_type) const { return statuses[damage_status_index(e, damage_type)]; }
+	inline perten power_status(status_per_power e, int power_type) const { return statuses[power_status_index(e, power_type)]; }
+	inline perten skill_status(status_per_skill e, int slot) const { return statuses[skill_status_index(e, slot)]; }
 
 	// --- Skills ---
 
@@ -277,8 +278,10 @@ struct entity
 		for (const auto& v : timed_statuses) { (void)v; return false; }
 		for (int power_type = 0; power_type < power_types; power_type++)
 		{
-			for (unsigned i = 0; i < powers[i].recovery.size(); i++) if (powers[power_type].recovery[i] != perten_empty) return false;
-			for (unsigned i = 0; i < damage[i].dot.size(); i++) if (damage[power_type].dot[i] != perten_empty) return false;
+			if (powers[power_type].excess != perten_empty) return false;
+			if (power_status(power_regeneration_rate, power_type) != perten_empty) return false;
+			for (unsigned i = 0; i < powers[power_type].recovery.size(); i++) if (powers[power_type].recovery[i] != perten_empty) return false;
+			for (unsigned i = 0; i < damage[power_type].dot.size(); i++) if (damage[power_type].dot[i] != perten_empty) return false;
 		}
 		return true;
 	}
@@ -326,7 +329,7 @@ struct entity
 		s.value = std::max(perten_empty, s.value - perten_apply(perten_full, skill_status(modifier, i)));
 		if (s.value == perten_empty)
 		{
-			s.state = skill_state_animation;
+			s.state = next;
 			s.value = next_value;
 			events.push_back({i, next});
 			return true;
@@ -359,12 +362,25 @@ struct entity
 		for (int i = 0; i < skill_slots; i++)
 		{
 			skill_slot_def& s = slots[i];
+			if (s.state == skill_state_ready)
+			{
+				if (s.value != perten_empty) s.value = std::max(perten_empty, s.value - perten_full);
+				continue;
+			}
 
-			if (s.value == perten_empty) continue;
+			// Allow cascading transitions when one or more phases have zero duration.
+			// There are at most three transitions in a tick: windup -> animation -> cooldown -> ready.
+			bool advanced = true;
+			for (int guard = 0; guard < 3 && advanced; guard++)
+			{
+				if (s.state == skill_state_windup) advanced = update_skill_state(i, s, windup_time_modifier, skill_state_animation, s.animation_time);
+				else if (s.state == skill_state_animation) advanced = update_skill_state(i, s, animation_time_modifier, skill_state_cooldown, s.cooldown_time);
+				else if (s.state == skill_state_cooldown) advanced = update_skill_state(i, s, cooldown_time_modifier, skill_state_ready, perten_from_uint(pop_ticks));
+				else advanced = false;
 
-			if (s.state == skill_state_windup) events_added += update_skill_state(i, s, windup_time_modifier, skill_state_animation, s.cooldown_time);
-			else if (s.state == skill_state_animation) events_added += update_skill_state(i, s, animation_time_modifier, skill_state_cooldown, s.cooldown_time);
-			else if (s.state == skill_state_cooldown) events_added += update_skill_state(i, s, cooldown_time_modifier, skill_state_ready, perten_from_uint(pop_ticks));
+				if (advanced) events_added++;
+				if (!advanced || s.state == skill_state_ready || s.value != perten_empty) break;
+			}
 		}
 		return events_added > 0;
 	}
@@ -380,14 +396,13 @@ struct entity
 		seconds = perten_to_uint(std::min(perten_from_uint(max_effect_secs), perten_apply(perten_from_uint(seconds), modify_time)));
 		perten a = perten_apply(perten_from_percent(amount), perten_from_percent(offense[damage_dot]));
 		assert(damage_type < damage_types);
-		while (seconds && amount)
+		while (seconds && a != perten_empty)
 		{
-			damage[damage_type].dot[current_effect_second] += perten_from_percent(amount);
+			damage[damage_type].dot[current_effect_second] += a;
 			a = perten_apply(a, exponential);
 			seconds--;
 			current_effect_second = (current_effect_second + 1) % max_effect_secs;
 		}
-		amount = perten_to_percent(a);
 	}
 
 	void apply_recover_effect(int current_effect_second, int power_type, uint32_t seconds, uint32_t amount)
@@ -480,7 +495,8 @@ struct stats
 			{
 				power_def& p = e.powers[i];
 				perten maximum = e.power_status(power_maximum, i);
-				p.current = std::min(maximum, p.current + perten_apply(p.recovery[current_effect_second], e.power_status(power_recovery_modify, i)));
+				perten gain = p.recovery[current_effect_second] + e.power_status(power_regeneration_rate, i);
+				p.current = std::min(maximum, p.current + perten_apply(gain, e.power_status(power_recovery_modify, i)));
 				p.recovery[current_effect_second] = perten_empty;
 				p.excess = p.excess - std::min(perten_full, perten_apply(p.excess, e.power_status(power_excess_loss_rate, i))); // excess burnoff
 			}
