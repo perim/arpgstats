@@ -54,8 +54,8 @@ bool read_currencies(const char* path)
 		if (type != "Currency") continue;
 		v.name = row["Name"].get<>();
 		v.weighting = row["Weighting"].get<int>();
-		if (row["Min abyss level"].is_int()) v.weighting = row["Min abyss level"].get<int>();
-		if (row["Max stack size"].is_int()) v.weighting = row["Max stack size"].get<int>();
+		if (row["Min abyss level"].is_int()) v.min_level = row["Min abyss level"].get<int>();
+		if (row["Max stack size"].is_int()) v.max_stack = row["Max stack size"].get<int>();
 		// TBD Handle Tags
 		// TBD Handle Description
 		currencies.push_back(v);

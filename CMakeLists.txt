@@ -1,7 +1,9 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
 PROJECT(arpgstats VERSION 0.1)
 
-set(ARPGSTATS_LIBS stdc++ m)
+add_subdirectory(external/libdicey ${CMAKE_BINARY_DIR}/libdicey)
+
+set(ARPGSTATS_LIBS stdc++ m dicey)
 enable_testing()
 
 ADD_EXECUTABLE(stats_test tests/stats_test.cpp arpgstats.h external/libdicey/dmath.h external/libdicey/perten.h)

@@ -29,9 +29,16 @@ int main(int argc, char** argv)
 	assert(item.mods.size() > 0);
 	(void)item;
 
-	drops_t drops = generate_drops(ctx, 1, 1, nullptr);
+	drops_t drops = generate_drops(ctx, 1, 3, nullptr);
 	assert(drops.items.size() == 1);
-	assert(drops.currencies.size() == 1);
+	assert(drops.currencies.size() == 3);
+	printf("Dropped:\n");
+	for (unsigned i = 0; i < 3; i++)
+	{
+		assert(drops.currencies[i].amount > 0);
+		assert(drops.currencies[i].type < currency_types.size());
+		printf("\tCurrency: %d %s\n", (int)drops.currencies[i].amount, currency_types[drops.currencies[i].type].c_str());
+	}
 	(void)drops;
 	return 0;
 }
