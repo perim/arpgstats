@@ -15,6 +15,7 @@ struct currency_type_t
 static std::vector<std::string> item_types;
 static std::vector<std::string> currency_types;
 static std::vector<currency_type_t> currencies;
+static const_roll_table* currency_table = nullptr;
 
 item_t create_item(const loot_context_t& context, const restrict_drop_t* filter)
 {
@@ -23,11 +24,27 @@ item_t create_item(const loot_context_t& context, const restrict_drop_t* filter)
 	return item;
 }
 
-drops_t generate_drops(const loot_context_t& context, int items, int currencies, const restrict_drop_t* keystone)
+drops_t generate_drops(const loot_context_t& context, int items, int currency_count, const restrict_drop_t* keystone)
 {
+	seed s = seed_random(); // only keystone drop will use deterministic rolls
 	drops_t drops;
 	drops.items.resize(items);
-	drops.currencies.resize(currencies);
+	for (int i = 0; i < items; i++)
+	{
+		const restrict_drop_t* filter = (keystone != nullptr && i == 0) ? keystone : nullptr;
+		drops.items.at(i) = create_item(context, filter);
+	}
+	drops.currencies.resize(currency_count);
+	while (currency_count)
+	{
+		const int index = currency_table->roll(s);
+		const int min_level = currencies.at(index).min_level;
+		if (context.level_modifiers && context.level_modifiers->depth < min_level) continue; // try again
+		const int max_stack = currencies.at(index).max_stack;
+		const int amount = s.quadratic_weighted_roll(max_stack - 1) + 1;
+		drops.currencies[currency_count - 1] = { (uint16_t)index, (uint16_t)amount };
+		currency_count--;
+	}
 	return drops;
 }
 
@@ -46,6 +63,8 @@ bool read_items(const char* path)
 bool read_currencies(const char* path)
 {
 	csv::CSVReader reader(path);
+	if (currency_table) delete currency_table;
+	std::vector<int> weights;
 
 	for (auto& row : reader)
 	{
@@ -60,8 +79,9 @@ bool read_currencies(const char* path)
 		// TBD Handle Description
 		currencies.push_back(v);
 		currency_types.push_back(v.name);
+		weights.push_back(v.weighting);
 	}
-
+	currency_table = new const_roll_table(weights);
 	return true;
 }
 
