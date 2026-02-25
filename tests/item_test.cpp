@@ -24,7 +24,13 @@ int main(int argc, char** argv)
 	const std::vector<std::string>& currency_types = get_currency_types();
 	assert(currency_types.size() > 0);
 
+	level_loot_context_t level_modifiers;
+	item_luck_t player_modifiers;
 	struct loot_context_t ctx(s);
+	ctx.level_modifiers = &level_modifiers;
+	ctx.player_modifiers = &player_modifiers;
+	init_item_cache(ctx);
+
 	item_t item = create_item(ctx, nullptr);
 	assert(item.mods.size() > 0);
 	(void)item;
@@ -40,5 +46,7 @@ int main(int argc, char** argv)
 		printf("\tCurrency: %d %s\n", (int)drops.currencies[i].amount, currency_types[drops.currencies[i].type].c_str());
 	}
 	(void)drops;
+
+	free_item_cache(ctx);
 	return 0;
 }

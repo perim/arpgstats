@@ -66,8 +66,8 @@ struct item_luck_t
 struct level_loot_context_t
 {
 	std::vector<tag_t> tags; // any area tags
-	int depth; // our current depth
-	int difficulty; // our current difficulty
+	int depth = 1; // our current depth, starting from 1
+	int difficulty = 0; // our current difficulty
 	int base_quantity = 3; // for any fractional quantity, roll on it to see if we add 1 more
 	int level_quantity_bonus = 0; // any challenge based quantity % being awarded
 	int level_rarity_bonus = 0; // any challenge based rarity % being awarded
@@ -76,12 +76,15 @@ struct level_loot_context_t
 	int unique_chance = 25; // each chest has this chance of containing a unique, and this chance is non-modifiable
 };
 
+struct item_cache;
+
 struct loot_context_t
 {
-	loot_context_t(seed& s) : rand(s) {}
+	loot_context_t(const seed& s) : rand(s) {}
 	seed rand; // when level is created, determine how many chests are there, and generate a seed for each ahead of time
 	const level_loot_context_t* level_modifiers = nullptr;
 	const item_luck_t* player_modifiers = nullptr;
+	item_cache* cache = nullptr; // private data, initialize with init_item_cache()
 };
 
 struct currency_t
@@ -95,6 +98,12 @@ struct drops_t
 	std::vector<item_t> items;
 	std::vector<currency_t> currencies;
 };
+
+/// Initialize an item cache for a level
+void init_item_cache(loot_context_t& ctx);
+
+/// Free an item cache
+void free_item_cache(loot_context_t& ctx);
 
 /// Read item definitions from CSV
 bool read_items(const char* path);
