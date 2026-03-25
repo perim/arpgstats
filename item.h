@@ -5,7 +5,6 @@
 #include "external/libdicey/dice.h"
 
 #include <stdint.h>
-
 #include <vector>
 
 enum class base_item_type_t
