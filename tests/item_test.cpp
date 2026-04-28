@@ -8,7 +8,7 @@ int main(int argc, char** argv)
 
 	if (argc < 3)
 	{
-		printf("Usage: %s <csv item file> <csv currency file\n", argv[0]);
+		printf("Usage: %s <csv item file> <csv currency file>\n", argv[0]);
 		exit(-1);
 	}
 
