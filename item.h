@@ -42,7 +42,7 @@ struct restrict_drop_t
 
 struct item_t
 {
-	uint32_t item_type;
+	uint32_t item_type = 0;
 	std::vector<mod> mods; // ordered implicit -> permanent -> spawn -> crafted
 	position found; // where you found it
 	index_t crafted; // who made it

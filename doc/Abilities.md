@@ -1,5 +1,4 @@
-ARPG Abilities Management
-=========================
+# ARPG Abilities Management
 
 This module can take care of tracking powers (such as health, stamina, energy), skill
 cooldowns, buffs and debuffs, while implementing features such as regeneration,
@@ -23,8 +22,7 @@ done on them. There is a helper function `inactive_candidate()` which will let y
 if we consider it safe to make it inactive (ie it has no timed statuses, recovery, or
 damage over time pending). It does not consider skill timers.
 
-Powers
-------
+## Powers
 
 We define a 'power' as a finite resource of some kind that the entity uses
 or needs and can replenish. For example health, mana, stamina, or energy. You
@@ -63,8 +61,7 @@ You can apply a power cost using the function `try_expense(power_type, amount)` 
 returns true if we could expense the cost, and false if we could not and nothing is
 changed.
 
-Damage
-------
+## Damage
 
 Damage is any kind of loss of power that is not a cost. We support any number of
 different damage types.
@@ -98,8 +95,9 @@ circular damage over time buffer. The `offense` array contains the above statuse
 offense. The `instant` and `dot` arrays contain fractions of the damage that will also
 be dealt as other damage types.
 
-Skills
-------
+Each power has its own damage reduction stats.
+
+## Skills
 
 A skill is any ability that an entity (player or non-player) can utilize.
 
@@ -131,8 +129,7 @@ Some key skill functions:
 * `try_start_skill(slot)` - try to initiate a skill, includes paying for it as above
 * `interrupt()` - call this if the entity is interrupted (eg player decides to move)
 
-Event queue
------------
+## Event queue
 
 Whenever something changes that the calling API should act on, something is pushed to the
 'event queue'. The `stats` object contains a member called `entities_with_events` which is

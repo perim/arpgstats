@@ -2,6 +2,8 @@
 
 #include "external/csv.hpp"
 
+#include <algorithm>
+
 struct currency_type_t
 {
 	std::string name;
@@ -54,7 +56,7 @@ void free_item_cache(loot_context_t& ctx)
 
 item_t create_item(const loot_context_t& context, const restrict_drop_t* filter)
 {
-	item_t item;
+	item_t item{};
 	item.mods.resize(1);
 	return item;
 }
@@ -89,11 +91,17 @@ drops_t generate_drops(const loot_context_t& context, int items, int currency_co
 
 bool read_items(const char* path)
 {
+	item_types.clear();
 	csv::CSVReader reader(path);
 
 	for (auto& row : reader)
 	{
-		// TBD
+		std::string type = row["Type"].get<>();
+		if (type.empty()) continue;
+		if (std::find(item_types.begin(), item_types.end(), type) == item_types.end())
+		{
+			item_types.push_back(type);
+		}
 	}
 
 	return true;
