@@ -20,6 +20,8 @@ static std::vector<std::string> currency_types;
 static std::vector<currency_type_t> currencies;
 static const_roll_table* currency_table = nullptr;
 static std::vector<int> currency_weights;
+static const_roll_table* item_table = nullptr;
+static std::vector<int> item_weights;
 
 struct item_cache
 {
@@ -56,8 +58,20 @@ void free_item_cache(loot_context_t& ctx)
 
 item_t create_item(const loot_context_t& context, const restrict_drop_t* filter)
 {
+	assert(item_table);
+	seed s = seed_random();
 	item_t item{};
-	item.mods.resize(1);
+	if (filter != nullptr && filter->item_type >= 0)
+	{
+		item.item_type = (uint32_t)filter->item_type;
+	}
+	else
+	{
+		item.item_type = (uint32_t)item_table->roll(s);
+	}
+	// FIXME: First roll more specific types, then cap/fill by min_mods and max_mods last
+	const int num_mods = s.roll(context.level_modifiers->min_mods, context.level_modifiers->max_mods);
+	item.mods.resize(num_mods);
 	return item;
 }
 
@@ -91,7 +105,14 @@ drops_t generate_drops(const loot_context_t& context, int items, int currency_co
 
 bool read_items(const char* path)
 {
+	if (item_table)
+	{
+		delete item_table;
+		item_table = nullptr;
+	}
 	item_types.clear();
+	item_weights.clear();
+
 	csv::CSVReader reader(path);
 
 	for (auto& row : reader)
@@ -101,7 +122,15 @@ bool read_items(const char* path)
 		if (std::find(item_types.begin(), item_types.end(), type) == item_types.end())
 		{
 			item_types.push_back(type);
+			int weighting = 100;
+			if (row["Weighting"].is_int()) weighting = row["Weighting"].get<int>();
+			item_weights.push_back(weighting);
 		}
+	}
+
+	if (!item_weights.empty())
+	{
+		item_table = new const_roll_table(item_weights);
 	}
 
 	return true;

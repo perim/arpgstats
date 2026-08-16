@@ -60,6 +60,7 @@ struct item_luck_t
 	// note that the roll of permanent mods cannot be influenced, it is deterministic
 	mod_roll_t roll_rarity_weightings; // added to general rarity
 	mod_roll_t roll_quantity_weightings; // added to general quantity
+	bool replace_permanent_with_spawn = false;
 };
 
 struct level_loot_context_t
@@ -73,6 +74,15 @@ struct level_loot_context_t
 	int item_distribution = 50; // each item has 50% chance of being an item rather than currency
 	int consumable_distribution = 50; // each item has 50% chance of being a consumable
 	int unique_chance = 25; // each chest has this chance of containing a unique, and this chance is non-modifiable
+
+	int min_permanent_mods = 0; // deterministic roll, unaffected by rarity
+	int max_permanent_mods = 1;
+	int min_spawn_mods = 0; // affected by rarity
+	int max_spawn_mods = 1;
+	int min_crafted_mods = 0; // affected by rarity
+	int max_crafted_mods = 4;
+	int min_mods = 1; // final cap
+	int max_mods = 4;
 };
 
 struct item_cache;

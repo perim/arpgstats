@@ -33,9 +33,13 @@ int main(int argc, char** argv)
 
 	bool r = read_items(argv[1]);
 	assert(r);
+	const std::vector<std::string>& item_types = get_item_types();
+	assert(item_types.size() > 0);
 
 	r = read_currencies(argv[2]);
 	assert(r);
+	const std::vector<std::string>& currency_types = get_currency_types();
+	assert(currency_types.size() > 0);
 
 	level_loot_context_t level_modifiers;
 	item_luck_t player_modifiers;
