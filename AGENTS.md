@@ -10,8 +10,6 @@
 - Configure: `cmake -S . -B build` — generates build files in `build/`.
 - Build: `cmake --build build` — compiles test executables and any targets.
 - Run tests via CTest: `ctest --test-dir build` — currently registers `stats_test`.
-- Run tests directly: `./build/stats_test` and `./build/mods_test` — useful since `mods_test` is not registered in CTest.
-- `build/mods_test` requires a CSV file as input. `data/niflhel/combined.csv` can be used, if it exists.
 - The test data file `data/niflhel/combined.csv` can be created by entering the directory `data/niflhel` and running the scripts `pull.sh` then `combine.py`.
 
 ## Coding Style & Naming Conventions

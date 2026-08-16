@@ -2,6 +2,7 @@
 
 function pull {
 	wget -O $1 "https://docs.google.com/spreadsheets/d/1ZRqxQG7gUIBRWpFN0wHsOepKXADBqRTk0ofpcBVnM-c/export?format=csv&gid=$2"
+	dos2unix $1
 }
 
 # Modifiers
@@ -12,7 +13,7 @@ pull device_mods.csv 1526865506
 pull item_implicits.csv 736088889
 
 # Items
-pull equipment.csv 1927042379
+pull items.csv 1927042379
 pull currencies.csv 874376262
 
 # Monsters

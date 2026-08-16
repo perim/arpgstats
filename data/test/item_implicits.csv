@@ -1,0 +1,86 @@
+Type,Weighting,Subtype,Description,Define,Min,Max
+Sword,,Implicit,,base_damage,100,100
+Sword,,Implicit,,speed,100,100
+Sword,,Implicit,,range,10,10
+Axe,,Implicit,,base_damage,150,150
+Axe,,Implicit,,speed,50,50
+Axe,,Implicit,,range,10,10
+Axe,,Implicit,% of physical damage added as physical damage over time,phys_to_dot,25,25
+Dagger,,Implicit,,base_damage,75,75
+Dagger,,Implicit,,speed,150,150
+Dagger,,Implicit,,range,5,5
+Dagger,,Implicit,% more critical strike chance,critical_chance,25,25
+Hammer,,Implicit,,base_damage,100,100
+Hammer,,Implicit,,speed,100,100
+Hammer,,Implicit,,range,10,10
+Hammer,,Implicit,% stun duration,stun_duration,50,50
+Mace,,Implicit,,base_damage,125,125
+Mace,,Implicit,,speed,100,100
+Mace,,Implicit,,range,10,10
+2H Sword,,Implicit,,base_damage,200,200
+2H Sword,,Implicit,,speed,50,50
+2H Sword,,Implicit,,range,20,20
+2H Sword,,Implicit,% increased area of effect of abilities that use the weapon,weapon_aoe,50,50
+2H Axe,,Implicit,,base_damage,200,200
+2H Axe,,Implicit,,speed,50,50
+2H Axe,,Implicit,,range,20,20
+2H Axe,,Implicit,,phys_to_dot,50,50
+2H Hammer,,Implicit,,base_damage,200,200
+2H Hammer,,Implicit,,speed,50,50
+2H Hammer,,Implicit,,range,20,20
+2H Hammer,,Implicit,% stun duration,stun_duration,100,100
+2H Staff,,Implicit,,base_damage,150,150
+2H Staff,,Implicit,,speed,100,100
+2H Staff,,Implicit,,range,30,30
+Parrying dagger,,Implicit,,base_damage,50,50
+Parrying dagger,,Implicit,,speed,200,200
+Parrying dagger,,Implicit,,range,5,5
+Swordbreaker,,Implicit,,base_damage,25,25
+Swordbreaker,,Implicit,,speed,200,200
+Swordbreaker,,Implicit,,range,5,5
+Short bow,,Implicit,,base_damage,100,100
+Short bow,,Implicit,,speed,100,100
+Short bow,,Implicit,,range,100,100
+Longbow,,Implicit,,base_damage,150,150
+Longbow,,Implicit,,speed,50,50
+Longbow,,Implicit,,range,100,100
+Crossbow,,Implicit,,base_damage,100,100
+Crossbow,,Implicit,,speed,50,50
+Crossbow,,Implicit,,range,100,100
+Crossbow,,Implicit,,reload,6,6
+Heavy crossbow,,Implicit,,base_damage,200,200
+Heavy crossbow,,Implicit,,speed,25,25
+Heavy crossbow,,Implicit,,range,100,100
+Heavy crossbow,,Implicit,,reload,4,4
+Small shield,,Implicit,,speed,100,100
+Small shield,,Implicit,,damage_reduction,100,100
+Large shield,,Implicit,,speed,50,50
+Large shield,,Implicit,,damage_reduction,150,150
+Fortress shield,,Implicit,,speed,25,25
+Fortress shield,,Implicit,,damage_reduction,200,200
+Fortress shield,,Implicit,25% of block damage reduction also apply when not blocking,block_always,25,25
+Hood,,Implicit,,health,50,50
+Hood,,Implicit,,energy,50,50
+Circlet,,Implicit,,health,25,25
+Circlet,,Implicit,,energy,75,75
+Helmet,,Implicit,,health,75,75
+Helmet,,Implicit,,energy,25,25
+Plate,,Implicit,,health,90,90
+Plate,,Implicit,,stamina,10,10
+Leather,,Implicit,,health,50,50
+Leather,,Implicit,,stamina,50,50
+Scale,,Implicit,,health,75,75
+Scale,,Implicit,,stamina,25,25
+Robe,,Implicit,,health,25,25
+Robe,,Implicit,,energy,25,25
+Robe,,Implicit,,stamina,50,50
+Gauntlets,,Implicit,,health,50,50
+Gauntlets,,Implicit,,stamina,50,50
+Mitts,,Implicit,,health,25,25
+Mitts,,Implicit,,stamina,75,75
+Gloves,,Implicit,,health,25,25
+Gloves,,Implicit,,energy,75,75
+Boots,,Implicit,,health,50,50
+Boots,,Implicit,,stamina,50,50
+Greaves,,Implicit,,health,75,75
+Greaves,,Implicit,,stamina,25,25

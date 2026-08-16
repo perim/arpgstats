@@ -46,17 +46,17 @@ bool read_creatures(const char* path)
 		creature_type_t v;
 		v.name = row["Type"].get<>();
 		v.species = row["Species"].get<>();
-		v.weighting = row["Weighting"].get<int>();
-		v.min = row["Min"].get<int>();
-		v.max = row["Max"].get<int>();
-		v.move = row["Move"].get<int>();
-		v.physical = row["Phys"].get<int>();
+		if (row["Weighting"].is_int()) v.weighting = row["Weighting"].get<int>();
+		if (row["Min"].is_int()) v.min = row["Min"].get<int>();
+		if (row["Max"].is_int()) v.max = row["Max"].get<int>();
+		if (row["Move"].is_int()) v.move = row["Move"].get<int>();
+		if (row["Phys"].is_int()) v.physical = row["Phys"].get<int>();
 		std::string elem = row["Element"].get<>();
-		v.element = to_damage_type(elem);
-		v.elemental = row["Res+Dam"].get<int>(); // damage + resist
-		v.dot_duration = row["DoT secs"].get<int>();
-		v.attack_speed = row["Attack speed"].get<int>();
-		v.range = row["Range"].get<int>();
+		if (!elem.empty()) v.element = to_damage_type(elem);
+		if (row["Res+Dam"].is_int()) v.elemental = row["Res+Dam"].get<int>(); // damage + resist
+		if (row["DoT secs"].is_int()) v.dot_duration = row["DoT secs"].get<int>();
+		if (row["Attack speed"].is_int()) v.attack_speed = row["Attack speed"].get<int>();
+		if (row["Range"].is_int()) v.range = row["Range"].get<int>();
 		if (row["Ammo"].is_int()) v.ammo = row["Ammo"].get<int>();
 		if (row["Health"].is_int()) v.health = row["Health"].get<int>();
 		if (row["Energy"].is_int()) v.energy = row["Energy"].get<int>();

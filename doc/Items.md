@@ -6,6 +6,10 @@ on these items depend on how pseudorandom generation impacts them. The
 idea is that if you replay a level multiple times, some modifiers will
 drop the same, others will vary.
 
+An item is any droppable object that can be put into a player's
+inventory that can have mods, as opposed to currency which can be
+picked up but has no modifiers and can stack.
+
 ## Basic item types
 
 An item can be `equippable`, `placeable`, `unlockable`, or `consumable`.

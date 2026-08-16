@@ -1,0 +1,50 @@
+Classification,Type,Location,Weighting,Size (WxH)
+Melee,Sword,Main-hand,300,4x1
+Melee,Axe,Main-hand,300,3x2
+Melee,Dagger,Main-hand,200,3x1
+Melee,Hammer,Main-hand,350,3x2
+Melee,Mace,Main-hand,150,3x2
+Melee,2H Sword,Both hands,100,5x1
+Melee,2H Axe,Both hands,100,4x2
+Melee,2H Hammer,Both hands,200,4x2
+Melee,2H Staff,Both hands,200,4x2
+Parrying,Parrying dagger,Off-hand,100,3x2
+Parrying,Swordbreaker,Off-hand,100,3x2
+,,,,
+Ranged,Wand,Main-hand,100,2x1
+Ranged,Short bow,Main-hand,200,4x2
+Ranged,Longbow,Main-hand,125,5x2
+Ranged,Crossbow,Main-hand,100,3x3
+Ranged,Heavy crossbow,Main-hand,75,4x4
+,,,,
+Parrying,Small shield,Off-hand,400,3x3
+Parrying,Large shield,Off-hand,300,4x4
+Parrying,Fortress shield,Off-hand,100,5x4
+Quiver,Quiver,Off-hand,200,2x3
+,,,,
+Headgear,Hood,Head,300,2x2
+Headgear,Circlet,Head,300,2x2
+Headgear,Helmet,Head,300,2x2
+,,,,
+Body,Plate,Body,200,4x2
+Body,Leather,Body,450,4x2
+Body,Scale,Body,350,4x2
+Body,Robe,Body,300,4x2
+,,,,
+Gloves,Gauntlets,Gloves,500,2x2
+Gloves,Mitts,Gloves,300,2x2
+Gloves,Gloves,Gloves,400,2x2
+Boots,Boots,Feet,500,2x2
+Boots,Greaves,Feet,300,2x2
+Ring,Ring,Any ring,300,1x1
+Amulet,Amulet,Any amulet,300,1x2
+Belt,Belt,Any waist,300,1x2
+Backpack,Backpack,Back,100,2x3
+,,,,
+Crafting,Forge,Ground,50,4x4
+Crafting,Distillery,Ground,50,4x4
+Edible,Food,Consumable,500,1x1
+Edible,Potion,Consumable,500,2x1
+Crafting,Cauldron,Ground,50,4x4
+Travel,Map,Consumable,25,1x1
+Travel,Canvas,Consumable,200,1x1

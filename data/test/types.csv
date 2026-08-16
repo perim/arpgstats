@@ -1,0 +1,114 @@
+Type,Name,Weighting,Multiplier,Min abyss level,Description
+Condition,Attacked,100,0.75,,you attacked in the last 3 seconds
+Condition,Damaged,100,1,,you took damage in the last 4 seconds
+Condition,Casted,100,1,,you cast a spell in the last 3 seconds
+Condition,Life Lost,100,1.2,,you lost life in the last 10 seconds
+Condition,Moved,100,1.2,,you used a movement skill in the last 4 seconds
+Condition,Blocked,100,1.5,,you blocked a hit in the last 2 seconds
+Condition,Potion,100,1,,while under the effect of a potion
+Condition,Cooldown,25,1,,while an offensive spell is on cooldown
+Condition,Altar,50,1.75,,for 30 seconds after using an altar
+Condition,Ground Effect,50,1.2,,while standing in your own ground effect
+Condition,Offensive Cooldown,25,1.5,,while all offensive spells are on cooldown
+Condition,Defensive Cooldown,25,1.5,,while all defensive spells are on cooldown
+Element,Fire,100,,,
+Element,Cold,90,,,
+Element,Lightning,80,,,
+Drop Type,Currency,75,,,
+Drop Type,Equipable Item,100,,,
+Drop Type,Memory Fragment,50,,,
+Drop Type,Crafting Bench,30,,,
+Drop Condition,Killed,100,,,monsters you kill
+Drop Condition,Opened,50,,,chests you open
+Damage Type,Physical,100,,,Gray
+Damage Type,Fire,90,,,Red
+Damage Type,Cold,80,,,Blue
+Damage Type,Lightning,70,,,Yellow
+Damage Type,Poison,60,,,Green
+Skill Type,Attack,100,,,
+Skill Type,Spell,90,,,
+Skill Type,Debuff spell,40,,,
+Skill Type,Buff spell,40,,,
+Trigger,Life Loss,100,,,losing life to instant damage
+Trigger,Casting,100,,,casting a defensive spell
+Trigger,Movement,100,,,using a movement skill
+Item Category,Equipable,250,,,
+Item Category,Consumable,500,,,
+Item Category,Crafting Bench,50,,,
+Item Category,Treasure Map,,,,
+Currency,Scroll,200,,,
+Currency,Treasure Map,,,,
+Currency,Potion,800,,,
+Currency,Food,800,,,
+Currency,Opals,150,,,
+Currency,Mushrooms,1000,,,
+Currency,Spirits,1000,,,
+Currency,Jewels,50,,,
+Currency,Blood Crystal,50,,,
+Item Type,Gloves,200,,,
+Item Type,Boots,200,,,
+Item Type,Helmet,200,,,
+Item Type,Amulet,100,,,
+Item Type,Quiver,150,,,
+Item Type,Body,200,,,
+Item Type,Shield,200,,,
+Item Type,Weapon,300,,,
+Item Type,Wand,150,,,
+Item Type,Ring,100,,,
+Item Type,Belt,100,,,
+Item Type,Cauldron,50,,,
+Item Type,Forge,25,,,
+Item Type,Distillery,25,,,
+Item Type,Potion,500,,,
+Item Type,Food,500,,,
+Item Type,Fragment,50,,,
+Item Type,Map Canvas,20,,,
+Item Type,Portal Device,15,,,
+Weapon,Sword,300,,,
+Weapon,Axe,300,,,
+Weapon,Dagger,200,,,
+Weapon,Hammer,350,,,
+Weapon,Mace,150,,,
+Weapon,2H Sword,100,,,
+Weapon,2H Axe,100,,,
+Weapon,2H Hammer,200,,,
+Weapon,2H Staff,200,,,
+Weapon,Short bow,200,,,
+Weapon,Longbow,125,,,
+Weapon,Crossbow,100,,,
+Weapon,Heavy crossbow,75,,,
+Shield,Small shield,700,,,
+Shield,Large shield,300,,,
+Shield,Fortress shield,100,,,
+Headgear,Hood,300,,,
+Headgear,Circlet,300,,,
+Headgear,Helmet,300,,,
+Body,Plate,200,,,
+Body,Leather,450,,,
+Body,Scale,350,,,
+Body,Robe,300,,,
+Gloves,Gloves,500,,,
+Boots,Boots,500,,,
+League,Eitri,,,,
+League,Loki,,,,
+League,Lycan,,,,
+League,Ophidian,,,,
+League,Draconian,,,,
+League,Fear,,,,
+League,Angrboda,,,,
+Class,Champion,,,,
+Class,Berserker,,,,
+Class,Juggernaut,,,,
+Class,Wayfarer,,,,
+Class,Necromancer,,,,
+Class,Seer,,,,
+Class,Warlock,,,,
+Class,Elementalist,,,,
+Class,Sniper,,,,
+Class,Assassin,,,,
+Class,Trapper,,,,
+Class,Raider,,,,
+Class,Artificer,,,,
+Class,Alchemist,,,,
+Class,Druid,,,,
+Class,Ghost,,,,
