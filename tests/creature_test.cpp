@@ -5,14 +5,9 @@
 int main(int argc, char** argv)
 {
 	seed s(0);
+	const char* creaturecsv = "data/test/monsters.csv";
 
-	if (argc < 2)
-	{
-		printf("Usage: %s <csv creature file>\n", argv[0]);
-		exit(-1);
-	}
-
-	bool r = read_creatures(argv[1]);
+	bool r = read_creatures(creaturecsv);
 	assert(r);
 
 	struct creature_context_t ctx(s);

@@ -24,19 +24,15 @@ static void print_drops(const drops_t& drops)
 int main(int argc, char** argv)
 {
 	seed s(0);
+	const char *itemcsv = "data/test/items.csv";
+	const char *currencycsv = "data/test/currencies.csv";
 
-	if (argc < 3)
-	{
-		printf("Usage: %s <csv item file> <csv currency file>\n", argv[0]);
-		exit(-1);
-	}
-
-	bool r = read_items(argv[1]);
+	bool r = read_items(itemcsv);
 	assert(r);
 	const std::vector<std::string>& item_types = get_item_types();
 	assert(item_types.size() > 0);
 
-	r = read_currencies(argv[2]);
+	r = read_currencies(currencycsv);
 	assert(r);
 	const std::vector<std::string>& currency_types = get_currency_types();
 	assert(currency_types.size() > 0);
