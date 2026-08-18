@@ -32,9 +32,9 @@ struct variance_pair
 
 struct mod
 {
-	uint8_t type;
-	uint8_t roll;
-	mod_category category;
+	uint16_t type = 0; // index in modlist
+	uint16_t roll = 0;
+	mod_category category = mod_category::none;
 	variance_pair restriction;
 	variance_pair condition;
 };
@@ -66,17 +66,29 @@ struct mod_data
 /// any other function here.
 bool read_mods(const char* main);//, const char* reverse);
 
+/// Get total number of loaded mods.
+int get_mod_count();
+
 /// Get mod data for a given enumerated mod type by GUID index.
 const mod_data& get_mod_data(int index);
 
-/// Get a list of mods by GUID indicies that exist for a given type. TBD.
-//const std::vector<int>& get_mods_by_type(int type);
+/// Get a list of mods by GUID indices that exist for a given type index.
+const std::vector<int>& get_mods_by_type(int type);
 
 /// Get a list of types that exist. This is mostly for debugging.
 const std::vector<std::string>& get_mod_types();
+
+/// Look-up type index by type name
+std::optional<unsigned> get_mod_type_index(const std::string& v);
 
 /// Get a list of classifications that exist. This is mostly for debugging.
 const std::vector<std::string>& get_mod_classifications();
 
 /// Look-up classification index
 std::optional<unsigned> get_classification_index(const std::string& v);
+
+/// Get category name string
+const char* get_mod_category_name(mod_category cat);
+
+/// Format a modifier into human-readable text with its rolled values
+std::string format_mod_text(const mod& m);

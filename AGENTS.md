@@ -20,6 +20,7 @@
 - Tests use plain `assert()` in standalone executables.
 - Add new tests under `tests/` and include them in `CMakeLists.txt` via `ADD_EXECUTABLE`.
 - Name tests by behavior, e.g., `test_damage_distribution()` in `tests/stats_test.cpp`.
+- Run `git diff --check` to verify not leaving any trailing spaces.
 
 ## Data & Tooling Notes
 - CSV definitions live in `data/niflhel/*.csv`; `data/niflhel/combine.py` produces `combined.csv`.
