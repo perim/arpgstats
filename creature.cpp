@@ -29,22 +29,60 @@ struct creature_type_t
 };
 
 static std::vector<creature_type_t> creatures;
+static std::vector<int> creature_weights;
 
-void init_creature_cache(creature_context_t& ctx)
+const std::string& get_creature_name(int index)
 {
+	return creatures.at(index).name;
+}
+
+struct creature_cache
+{
+	filtered_const_roll_table* creatures = nullptr;
+
+	~creature_cache()
+	{
+		delete creatures;
+	}
+};
+
+bool init_creature_cache(creature_context_t& ctx)
+{
+	assert(!creatures.empty());
+	free_creature_cache(ctx);
+	ctx.cache = new creature_cache;
+	std::vector<bool> mask(creatures.size());
+	bool has_any = false;
+	for (unsigned i = 0; i < creatures.size(); i++)
+	{
+		const creature_type_t& c = creatures.at(i);
+		mask[i] = ctx.depth >= c.min_level && (c.max_level < 0 || ctx.depth <= c.max_level);
+		has_any |= mask[i];
+	}
+	assert(has_any);
+	if (has_any) ctx.cache->creatures = new filtered_const_roll_table(creature_weights, mask);
+	return has_any;
 }
 
 void free_creature_cache(creature_context_t& ctx)
 {
+	if (ctx.cache)
+	{
+		delete ctx.cache;
+		ctx.cache = nullptr;
+	}
 }
 
 bool read_creatures(const char* path)
 {
+	creatures.clear();
+	creature_weights.clear();
 	csv::CSVReader reader(path);
 	for (auto& row : reader)
 	{
 		creature_type_t v;
 		v.name = row["Type"].get<>();
+		if (v.name.empty()) continue; // skip sum rows
 		v.species = row["Species"].get<>();
 		if (row["Weighting"].is_int()) v.weighting = row["Weighting"].get<int>();
 		if (row["Min"].is_int()) v.min = row["Min"].get<int>();
@@ -67,11 +105,17 @@ bool read_creatures(const char* path)
 		if (row["Max level"].is_int()) v.max_level = row["Max level"].get<int>();
 		v.tags = row["Tags"].get<>(); // TBD decompose into a list
 		creatures.push_back(v);
+		creature_weights.push_back(v.weighting > 0 ? v.weighting : 100);
 	}
-	return true;
+	printf("Added %d creatures\n", (int)creatures.size());
+	return creatures.size() > 0;
 }
 
 creature_t create_creature(const creature_context_t& context)
 {
-	return creature_t{};
+	assert(context.cache && context.cache->creatures);
+	seed s = context.rand;
+	const uint16_t which = context.cache->creatures->roll(s);
+	creature_t c{ which };
+	return c;
 }

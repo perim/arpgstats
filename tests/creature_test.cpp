@@ -4,17 +4,18 @@
 
 int main(int argc, char** argv)
 {
-	seed s(0);
+	seed s = seed_random();
 	const char* creaturecsv = "data/test/monsters.csv";
 
 	bool r = read_creatures(creaturecsv);
 	assert(r);
 
 	struct creature_context_t ctx(s);
-	init_creature_cache(ctx);
+	r = init_creature_cache(ctx);
+	assert(r);
 
-	creature_t mob = create_creature(ctx);
-	(void)mob;
+	creature_t c = create_creature(ctx);
+	printf("Created %s\n", get_creature_name(c.creature_type).c_str());
 
 	free_creature_cache(ctx);
 	return 0;

@@ -154,11 +154,11 @@ bool read_mods(const char* filename)
 		if (category.empty()) category = row["Classification"].get<>();
 		if (category.empty()) data.category = mod_category::none;
 		else if (category == "Craft") data.category = mod_category::crafted;
-		else if (category == "Drop") data.category = mod_category::permanent; // TBD align csv and code naming here
+		else if (category == "Drop") data.category = mod_category::permanent; // backwards compatibility
+		else if (category == "Permanent") data.category = mod_category::permanent;
 		else if (category == "Spawn") data.category = mod_category::spawn;
 		else if (category == "Implicit") data.category = mod_category::implicit;
 		else data.category = mod_category::none; // League or special mods
-
 
 		// Requires temporary storage to set up with index
 		std::string requires = row["Requires"].get<>();

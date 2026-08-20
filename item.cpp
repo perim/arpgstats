@@ -413,7 +413,7 @@ bool read_items(const char* path)
 		item_table = new const_roll_table(item_weights);
 	}
 
-	return true;
+	return (item_table != nullptr);
 }
 
 bool read_currencies(const char* path)

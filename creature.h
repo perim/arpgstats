@@ -12,8 +12,8 @@ struct creature_cache;
 struct creature_context_t
 {
 	creature_context_t(const seed& s) : rand(s) {}
-	seed rand; // when level is created
 
+	seed rand; // derive from position from level seed to make both deterministic and parallelizable
 	std::vector<tag_t> tags; // any area tags
 	int depth = 1; // our current depth, starting from 1
 	int difficulty = 0; // our current difficulty scaling
@@ -23,8 +23,8 @@ struct creature_context_t
 
 struct creature_t
 {
+	uint16_t creature_type = 0;
 	// unique index value? for caller
-	//const std::string& name(); // type name
 	// powers vector/array
 	// current action state
 	// inactive vs active
@@ -41,7 +41,7 @@ struct tribe_t
 };
 
 /// Initialize a create cache for a level
-void init_creature_cache(creature_context_t& ctx);
+bool init_creature_cache(creature_context_t& ctx);
 
 /// Free a create cache
 void free_creature_cache(creature_context_t& ctx);
@@ -51,3 +51,6 @@ bool read_creatures(const char* path);
 
 /// Create a creature instance
 creature_t create_creature(const creature_context_t& context);
+
+/// Get all creature types.
+const std::string& get_creature_name(int index);
