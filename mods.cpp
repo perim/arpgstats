@@ -1,5 +1,5 @@
 #include "mods.h"
-#include "external/csv.hpp"
+#include "csv.h"
 
 #include <unordered_map>
 
@@ -124,7 +124,7 @@ bool read_mods(const char* filename)
 	mods_by_type.clear();
 	classifications.clear();
 
-	csv::CSVReader reader(filename);
+	csv::CSVReader reader = open_csv_reader(filename);
 	std::vector<std::string> require_list;
 
 	for (auto& row : reader)

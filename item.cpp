@@ -1,6 +1,6 @@
 #include "item.h"
 
-#include "external/csv.hpp"
+#include "csv.h"
 
 #include <algorithm>
 #include <unordered_set>
@@ -387,7 +387,7 @@ bool read_items(const char* path)
 	item_defs.clear();
 	item_weights.clear();
 
-	csv::CSVReader reader(path);
+	csv::CSVReader reader = open_csv_reader(path);
 
 	for (auto& row : reader)
 	{
@@ -424,7 +424,7 @@ bool read_currencies(const char* path)
 	if (currencies.size() > 0) currencies.clear();
 	if (currency_types.size() > 0) currency_types.clear();
 
-	csv::CSVReader reader(path);
+	csv::CSVReader reader = open_csv_reader(path);
 	for (auto& row : reader)
 	{
 		currency_type_t v;

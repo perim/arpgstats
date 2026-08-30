@@ -1,7 +1,7 @@
 #include "creature.h"
 #include "misc.h"
 
-#include "external/csv.hpp"
+#include "csv.h"
 
 struct creature_type_t
 {
@@ -112,7 +112,7 @@ bool read_creatures(const char* path)
 {
 	creatures.clear();
 	creature_weights.clear();
-	csv::CSVReader reader(path);
+	csv::CSVReader reader = open_csv_reader(path);
 	for (auto& row : reader)
 	{
 		creature_type_t v;
@@ -155,7 +155,7 @@ bool read_creature_roles(const char* path)
 		c.roles.assign(role_count, creature_role_t{});
 		c.role_mask = 0;
 	}
-	csv::CSVReader reader(path);
+	csv::CSVReader reader = open_csv_reader(path);
 	int added = 0;
 	for (auto& row : reader)
 	{
