@@ -9,6 +9,7 @@ static void test_read_roles()
 	assert(get_creature_index("No Such Creature") < 0);
 
 	const int firewraith = get_creature_index("Firewraith");
+	const int burningzombie = get_creature_index("Burning Zombie");
 	const creature_role_t* leader = get_creature_role(firewraith, role_type::leader);
 	assert(leader);
 	assert(leader->scaling == perten_from_percent(750));
@@ -17,7 +18,7 @@ static void test_read_roles()
 	const creature_role_t* damage = get_creature_role(firewraith, role_type::damage);
 	assert(damage);
 	assert(damage->scaling == perten_from_percent(150));
-	assert(damage->creature_type == (uint16_t)firewraith); // "Burning Zombie" not defined yet, falls back
+	assert(damage->creature_type == (uint16_t)burningzombie);
 
 	assert(get_creature_role(firewraith, role_type::tank));
 	assert(get_creature_role(firewraith, role_type::support));
