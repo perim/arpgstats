@@ -15,6 +15,6 @@ struct position
 	tile_t y;
 	level_t z;
 	index_t w; // instance number of zone
-	bool operator==(const position& rhs) { return std::tie(x, y, z, w) == std::tie(rhs.x, rhs.y, rhs.z, rhs.w); }
-	bool operator<(const position& rhs) { return std::tie(x, y, z, w) < std::tie(rhs.x, rhs.y, rhs.z, rhs.w); }
+	bool operator==(const position& rhs) const { return std::tie(x, y, z, w) == std::tie(rhs.x, rhs.y, rhs.z, rhs.w); }
+	bool operator<(const position& rhs) const { return std::tie(x, y, z, w) < std::tie(rhs.x, rhs.y, rhs.z, rhs.w); }
 };
