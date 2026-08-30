@@ -35,7 +35,8 @@ static void test_read_roles()
 static void test_tribe_role_assignment()
 {
 	struct creature_context_t ctx(seed_random());
-	assert(init_creature_cache(ctx));
+	const bool cache_ok = init_creature_cache(ctx);
+	assert(cache_ok);
 
 	for (int t = 0; t < get_creature_count(); t++)
 	{
@@ -83,7 +84,8 @@ static void test_create_tribe_deterministic()
 {
 	seed s = seed_random();
 	struct creature_context_t ctx(s);
-	assert(init_creature_cache(ctx));
+	const bool cache_ok = init_creature_cache(ctx);
+	assert(cache_ok);
 
 	const position pos{ 7, 9, 12, 3 };
 	const tribe_t a = create_tribe(ctx, pos);

@@ -2,7 +2,6 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.22)
 PROJECT(arpgstats VERSION 0.1)
 
 add_subdirectory(external/libdicey ${CMAKE_BINARY_DIR}/libdicey)
-set(CMAKE_CTEST_ARGUMENTS "--output-on-failure")
 
 # Copy the test data into the build directory. This is a build rule with the data files as
 # dependencies, so the copy stays up to date when they change (no reconfigure needed).
@@ -18,6 +17,7 @@ ADD_CUSTOM_TARGET(data_copy ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/data.stamp)
 
 set(ARPGSTATS_LIBS stdc++ m dicey)
 enable_testing()
+set(CMAKE_CTEST_ARGUMENTS "--output-on-failure")
 
 ADD_EXECUTABLE(stats_test tests/stats_test.cpp arpgstats.h external/libdicey/dmath.h external/libdicey/perten.h)
 TARGET_INCLUDE_DIRECTORIES(stats_test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
