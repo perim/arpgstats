@@ -1,7 +1,8 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.22)
 PROJECT(arpgstats VERSION 0.1)
 
 add_subdirectory(external/libdicey ${CMAKE_BINARY_DIR}/libdicey)
+set(CMAKE_CTEST_ARGUMENTS "--output-on-failure")
 
 # Copy the test data into the build directory. This is a build rule with the data files as
 # dependencies, so the copy stays up to date when they change (no reconfigure needed).
