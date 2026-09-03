@@ -198,7 +198,8 @@ void free_item_cache(loot_context_t& ctx)
 	}
 }
 
-static void roll_category_mods(seed& s,
+static void roll_category_mods(seed& select, // which mods to pick
+                               seed& value, // the % amount rolled on each mod
                                int count,
                                const std::vector<int>& mod_indices,
                                const const_roll_table* table,
@@ -212,7 +213,7 @@ static void roll_category_mods(seed& s,
 	while (remaining > 0 && attempts < count * 20)
 	{
 		attempts++;
-		int slot = table->roll(s);
+		int slot = table->roll(select);
 		int mod_idx = mod_indices[slot];
 		if (chosen_indices.find(mod_idx) != chosen_indices.end())
 		{
@@ -227,7 +228,7 @@ static void roll_category_mods(seed& s,
 		m.category = d.category;
 		if (d.max > d.min)
 		{
-			m.roll = (uint16_t)s.roll(d.min, d.max);
+			m.roll = (uint16_t)value.roll(d.min, d.max);
 		}
 		else
 		{
@@ -250,7 +251,7 @@ static void roll_category_mods(seed& s,
 				mod m;
 				m.type = (uint16_t)mod_idx;
 				m.category = d.category;
-				m.roll = (uint16_t)(d.max > d.min ? s.roll(d.min, d.max) : d.min);
+				m.roll = (uint16_t)(d.max > d.min ? value.roll(d.min, d.max) : d.min);
 				out_mods.push_back(m);
 				remaining--;
 			}
@@ -261,8 +262,9 @@ static void roll_category_mods(seed& s,
 item_t create_item(const loot_context_t& context, const restrict_drop_t* filter)
 {
 	assert(item_table);
-	seed& s = context.rand; // deterministic stream, advanced by each roll on it
-	seed r = seed_random(); // live random: crafted mods ignore any given seed
+	seed s = context.rand; // deterministic: item type and permanent mods
+	seed sp = context.spawn; // spawn mods, rerollable during a level
+	seed r = seed_random(); // live random: mod % values and crafted mods
 	item_t item{};
 	if (filter != nullptr && filter->item_type >= 0)
 	{
@@ -337,9 +339,9 @@ item_t create_item(const loot_context_t& context, const restrict_drop_t* filter)
 
 	std::unordered_set<int> chosen_indices;
 	// Order: implicit -> permanent -> spawn -> crafted
-	roll_category_mods(s, perm_count, pool->permanent_mods, pool->permanent_table, chosen_indices, item.mods);
-	roll_category_mods(s, spawn_count, pool->spawn_mods, pool->spawn_table, chosen_indices, item.mods);
-	roll_category_mods(r, craft_count, pool->crafted_mods, pool->crafted_table, chosen_indices, item.mods);
+	roll_category_mods(s, r, perm_count, pool->permanent_mods, pool->permanent_table, chosen_indices, item.mods);
+	roll_category_mods(sp, sp, spawn_count, pool->spawn_mods, pool->spawn_table, chosen_indices, item.mods);
+	roll_category_mods(r, r, craft_count, pool->crafted_mods, pool->crafted_table, chosen_indices, item.mods);
 
 	if (free_pool_needed)
 	{
@@ -360,7 +362,11 @@ drops_t generate_drops(const loot_context_t& context, int items, int currency_co
 	for (int i = 0; i < items; i++)
 	{
 		const restrict_drop_t* filter = (keystone != nullptr && i == 0) ? keystone : nullptr;
-		drops.items.at(i) = create_item(context, filter);
+		// Derive per-item seeds so items in the same drop set differ, while staying reproducible from the context seeds
+		loot_context_t item_context = context;
+		item_context.rand = context.rand.derive((uint64_t)i);
+		item_context.spawn = context.spawn.derive((uint64_t)i);
+		drops.items.at(i) = create_item(item_context, filter);
 	}
 
 	// Currencies

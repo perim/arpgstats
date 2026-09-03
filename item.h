@@ -90,7 +90,8 @@ struct item_cache;
 struct loot_context_t
 {
 	loot_context_t(const seed& s) : rand(s) {}
-	mutable seed rand; // deterministic working state, advanced by each roll on it. Currencies and crafted mods intentionally ignore it and roll live random
+	seed rand; // deterministic base seed: item type and permanent mods derive from it per item. Currencies, spawn mods and mod % values roll randomly
+	seed spawn = seed_random(); // seed for generating spawn mods, can be rerolled during a level
 	const level_loot_context_t* level_modifiers = nullptr;
 	const item_luck_t* player_modifiers = nullptr;
 	item_cache* cache = nullptr; // private data, initialize with init_item_cache()
