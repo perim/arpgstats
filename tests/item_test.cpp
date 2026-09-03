@@ -1,7 +1,14 @@
 #include "item.h"
 
+#include "util.h"
+
 #include <assert.h>
 #include <stdio.h>
+
+static bool verbose = false;
+static int depth = 1; // current depth level, starting from 1
+static uint64_t seed_value = 0;
+static bool has_seed = false; // if false, generate a random seed with seed_random()
 
 static void print_drops(const drops_t& drops)
 {
@@ -29,9 +36,56 @@ static void print_drops(const drops_t& drops)
 	}
 }
 
+void usage()
+{
+	printf("item_test [options]\n");
+	printf("\n");
+	printf("Options:\n");
+	printf("    -h/--help                This help\n");
+	printf("    -v/--verbose             Verbose output\n");
+	printf("    -d/--depth <level>       Current depth, filters loot (default 1)\n");
+	printf("    -s/--seed <value>        Seed for deterministic rolls (live random if not given)\n");
+	exit(-1);
+}
+
 int main(int argc, char** argv)
 {
-	seed s(0);
+	int remaining = argc - 1; // zeroth is name of program
+
+	for (int i = 1; i < argc; i++)
+	{
+		if (match(argv[i], "-h", "--help", remaining))
+		{
+			usage();
+		}
+		else if (match(argv[i], "-v", "--verbose", remaining))
+		{
+			verbose = true;
+		}
+		else if (match(argv[i], "-d", "--depth", remaining))
+		{
+			depth = get_int(argv[i + 1], remaining);
+			i++; // skip the value
+			if (depth < 1)
+			{
+				printf("Depth must be at least 1\n\n");
+				usage();
+			}
+		}
+		else if (match(argv[i], "-s", "--seed", remaining))
+		{
+			seed_value = get_uint64(argv[i + 1], remaining);
+			has_seed = true;
+			i++; // skip the value
+		}
+		else if (remaining > 0)
+		{
+			printf("Invalid option\n\n");
+			usage();
+		}
+	}
+
+	seed s = has_seed ? seed(seed_value) : seed_random();
 	const char *modscsv = "data/test/combined.csv";
 	const char *itemcsv = "data/test/items.csv";
 	const char *currencycsv = "data/test/currencies.csv";
@@ -51,6 +105,7 @@ int main(int argc, char** argv)
 	assert(currency_types.size() > 0);
 
 	level_loot_context_t level_modifiers;
+	level_modifiers.depth = depth;
 	item_luck_t player_modifiers;
 	struct loot_context_t ctx(s);
 	ctx.level_modifiers = &level_modifiers;

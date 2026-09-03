@@ -90,7 +90,7 @@ struct item_cache;
 struct loot_context_t
 {
 	loot_context_t(const seed& s) : rand(s) {}
-	seed rand; // when level is created, determine how many chests are there, and generate a seed for each ahead of time
+	mutable seed rand; // deterministic working state, advanced by each roll on it. Currencies and crafted mods intentionally ignore it and roll live random
 	const level_loot_context_t* level_modifiers = nullptr;
 	const item_luck_t* player_modifiers = nullptr;
 	item_cache* cache = nullptr; // private data, initialize with init_item_cache()

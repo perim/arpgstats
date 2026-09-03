@@ -261,7 +261,8 @@ static void roll_category_mods(seed& s,
 item_t create_item(const loot_context_t& context, const restrict_drop_t* filter)
 {
 	assert(item_table);
-	seed s = seed_random();
+	seed& s = context.rand; // deterministic stream, advanced by each roll on it
+	seed r = seed_random(); // live random: crafted mods ignore any given seed
 	item_t item{};
 	if (filter != nullptr && filter->item_type >= 0)
 	{
@@ -297,7 +298,7 @@ item_t create_item(const loot_context_t& context, const restrict_drop_t* filter)
 
 	int perm_count = is_unique ? s.roll(lvl.min_permanent_mods, lvl.max_permanent_mods) : lvl.min_permanent_mods;
 	int spawn_count = s.roll(lvl.min_spawn_mods, lvl.max_spawn_mods);
-	int craft_count = s.roll(lvl.min_crafted_mods, lvl.max_crafted_mods);
+	int craft_count = r.roll(lvl.min_crafted_mods, lvl.max_crafted_mods);
 
 	if (context.player_modifiers && context.player_modifiers->replace_permanent_with_spawn)
 	{
@@ -338,7 +339,7 @@ item_t create_item(const loot_context_t& context, const restrict_drop_t* filter)
 	// Order: implicit -> permanent -> spawn -> crafted
 	roll_category_mods(s, perm_count, pool->permanent_mods, pool->permanent_table, chosen_indices, item.mods);
 	roll_category_mods(s, spawn_count, pool->spawn_mods, pool->spawn_table, chosen_indices, item.mods);
-	roll_category_mods(s, craft_count, pool->crafted_mods, pool->crafted_table, chosen_indices, item.mods);
+	roll_category_mods(r, craft_count, pool->crafted_mods, pool->crafted_table, chosen_indices, item.mods);
 
 	if (free_pool_needed)
 	{
@@ -351,7 +352,7 @@ item_t create_item(const loot_context_t& context, const restrict_drop_t* filter)
 drops_t generate_drops(const loot_context_t& context, int items, int currency_count, const restrict_drop_t* keystone)
 {
 	assert(context.cache);
-	seed s = seed_random(); // for non-deterministic rolls
+	seed r = seed_random(); // currencies are live random, ignore any given seed
 	drops_t drops;
 
 	// Items
@@ -367,9 +368,9 @@ drops_t generate_drops(const loot_context_t& context, int items, int currency_co
 	drops.currencies.resize(currency_count);
 	while (currency_count)
 	{
-		const int index = context.cache->currencies->roll(s);
+		const int index = context.cache->currencies->roll(r);
 		const int max_stack = currencies.at(index).max_stack;
-		const int amount = s.quadratic_weighted_roll(max_stack - 1) + 1;
+		const int amount = r.quadratic_weighted_roll(max_stack - 1) + 1;
 		drops.currencies[currency_count - 1] = { (uint16_t)index, (uint16_t)amount };
 		currency_count--;
 	}
